@@ -28,6 +28,7 @@ logger = logging.get_logger(__name__)
 MODEL_MAPPING_NAMES = OrderedDict(
     [
         # Base model mapping
+        ("h_transformer_1d", "HTransformer1dModel"),
         ("gptj", "GPTJModel"),
         ("layoutlmv2", "LayoutLMv2Model"),
         ("beit", "BeitModel"),
@@ -136,6 +137,7 @@ MODEL_FOR_PRETRAINING_MAPPING_NAMES = OrderedDict(
 MODEL_WITH_LM_HEAD_MAPPING_NAMES = OrderedDict(
     [
         # Model with LM heads mapping
+("h_transformer_1d", "HTransformer1dForMaskedLM"),
         ("gptj", "GPTJForCausalLM"),
         ("rembert", "RemBertForMaskedLM"),
         ("roformer", "RoFormerForMaskedLM"),
@@ -185,6 +187,7 @@ MODEL_WITH_LM_HEAD_MAPPING_NAMES = OrderedDict(
 MODEL_FOR_CAUSAL_LM_MAPPING_NAMES = OrderedDict(
     [
         # Model for Causal LM mapping
+        ("h_transformer_1d", "HTransformer1dForCausalLM"),
         ("gptj", "GPTJForCausalLM"),
         ("rembert", "RemBertForCausalLM"),
         ("roformer", "RoFormerForCausalLM"),
@@ -228,6 +231,7 @@ MODEL_FOR_IMAGE_CLASSIFICATION_MAPPING_NAMES = OrderedDict(
 MODEL_FOR_MASKED_LM_MAPPING_NAMES = OrderedDict(
     [
         # Model for Masked LM mapping
+("h_transformer_1d", "HTransformer1dForMaskedLM"),
         ("rembert", "RemBertForMaskedLM"),
         ("roformer", "RoFormerForMaskedLM"),
         ("big_bird", "BigBirdForMaskedLM"),
@@ -290,6 +294,7 @@ MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING_NAMES = OrderedDict(
 MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING_NAMES = OrderedDict(
     [
         # Model for Sequence Classification mapping
+        ("h_transformer_1d", "HTransformer1dForSequenceClassification"),
         ("gptj", "GPTJForSequenceClassification"),
         ("layoutlmv2", "LayoutLMv2ForSequenceClassification"),
         ("rembert", "RemBertForSequenceClassification"),
@@ -334,6 +339,7 @@ MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING_NAMES = OrderedDict(
 MODEL_FOR_QUESTION_ANSWERING_MAPPING_NAMES = OrderedDict(
     [
         # Model for Question Answering mapping
+        ("h_transformer_1d", "HTransformer1dForQuestionAnswering"),
         ("layoutlmv2", "LayoutLMv2ForQuestionAnswering"),
         ("rembert", "RemBertForQuestionAnswering"),
         ("canine", "CanineForQuestionAnswering"),
@@ -379,6 +385,7 @@ MODEL_FOR_TABLE_QUESTION_ANSWERING_MAPPING_NAMES = OrderedDict(
 MODEL_FOR_TOKEN_CLASSIFICATION_MAPPING_NAMES = OrderedDict(
     [
         # Model for Token Classification mapping
+("h_transformer_1d", "HTransformer1dForTokenClassification"),
         ("layoutlmv2", "LayoutLMv2ForTokenClassification"),
         ("rembert", "RemBertForTokenClassification"),
         ("canine", "CanineForTokenClassification"),
@@ -412,6 +419,7 @@ MODEL_FOR_TOKEN_CLASSIFICATION_MAPPING_NAMES = OrderedDict(
 MODEL_FOR_MULTIPLE_CHOICE_MAPPING_NAMES = OrderedDict(
     [
         # Model for Multiple Choice mapping
+("h_transformer_1d", "HTransformer1dForMultipleChoice"),
         ("rembert", "RemBertForMultipleChoice"),
         ("canine", "CanineForMultipleChoice"),
         ("roformer", "RoFormerForMultipleChoice"),

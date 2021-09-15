@@ -17,6 +17,7 @@
 # limitations under the License.
 
 from . import (
+    h_transformer_1d,
     albert,
     auto,
     bart,

@@ -144,6 +144,7 @@ _import_structure = {
         "load_tf2_weights_in_pytorch_model",
     ],
     # Models
+    "models.h_transformer_1d": ["H_TRANSFORMER_1D_PRETRAINED_CONFIG_ARCHIVE_MAP", "HTransformer1dConfig", "HTransformer1dTokenizer"],
     "models": [],
     "models.albert": ["ALBERT_PRETRAINED_CONFIG_ARCHIVE_MAP", "AlbertConfig"],
     "models.auto": [
@@ -365,6 +366,7 @@ else:
 # tokenizers-backed objects
 if is_tokenizers_available():
     # Fast tokenizers
+    _import_structure["models.h_transformer_1d"].append("HTransformer1dTokenizerFast")
     _import_structure["models.roformer"].append("RoFormerTokenizerFast")
     _import_structure["models.clip"].append("CLIPTokenizerFast")
     _import_structure["models.convbert"].append("ConvBertTokenizerFast")
@@ -521,6 +523,22 @@ if is_torch_available():
     _import_structure["modeling_utils"] = ["Conv1D", "PreTrainedModel", "apply_chunking_to_forward", "prune_layer"]
 
     # PyTorch models structure
+
+    _import_structure["models.h_transformer_1d"].extend(
+        [
+            "H_TRANSFORMER_1D_PRETRAINED_MODEL_ARCHIVE_LIST",
+            "HTransformer1dForMaskedLM",
+            "HTransformer1dForCausalLM",
+            "HTransformer1dForMultipleChoice",
+            "HTransformer1dForQuestionAnswering",
+            "HTransformer1dForSequenceClassification",
+            "HTransformer1dForTokenClassification",
+            "HTransformer1dLayer",
+            "HTransformer1dModel",
+            "HTransformer1dPreTrainedModel",
+            "load_tf_weights_in_h_transformer_1d",
+        ]
+    )
     _import_structure["models.albert"].extend(
         [
             "ALBERT_PRETRAINED_MODEL_ARCHIVE_LIST",
@@ -1941,6 +1959,7 @@ if TYPE_CHECKING:
         load_tf2_weights_in_pytorch_model,
     )
     from .models.albert import ALBERT_PRETRAINED_CONFIG_ARCHIVE_MAP, AlbertConfig
+    from .models.h_transformer_1d import H_TRANSFORMER_1D_PRETRAINED_CONFIG_ARCHIVE_MAP, HTransformer1dConfig, HTransformer1dTokenizer
     from .models.auto import (
         ALL_PRETRAINED_CONFIG_ARCHIVE_MAP,
         CONFIG_MAPPING,
@@ -2149,6 +2168,7 @@ if TYPE_CHECKING:
         from .utils.dummy_sentencepiece_objects import *
 
     if is_tokenizers_available():
+        from .models.h_transformer_1d import HTransformer1dTokenizerFast
         from .models.albert import AlbertTokenizerFast
         from .models.bart import BartTokenizerFast
         from .models.barthez import BarthezTokenizerFast
@@ -2230,6 +2250,20 @@ if TYPE_CHECKING:
         from .utils.dummy_timm_objects import *
 
     if is_torch_available():
+
+        from .models.h_transformer_1d import (
+            H_TRANSFORMER_1D_PRETRAINED_MODEL_ARCHIVE_LIST,
+            HTransformer1dForMaskedLM,
+            HTransformer1dForCausalLM,
+            HTransformer1dForMultipleChoice,
+            HTransformer1dForQuestionAnswering,
+            HTransformer1dForSequenceClassification,
+            HTransformer1dForTokenClassification,
+            HTransformer1dLayer,
+            HTransformer1dModel,
+            HTransformer1dPreTrainedModel,
+            load_tf_weights_in_h_transformer_1d,
+        )
         # Benchmarks
         from .benchmark.benchmark import PyTorchBenchmark
         from .benchmark.benchmark_args import PyTorchBenchmarkArguments
