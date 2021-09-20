@@ -91,10 +91,23 @@ class HTransformer1dConfig(PretrainedConfig):
 
     def __init__(
         self,
-        vocab_size=30522,
-        hidden_size=768,
-        num_hidden_layers=12,
-        num_attention_heads=12,
+        # REQUIRED for lucidrains implementation:
+        vocab_size=30522,  # ^ called "num_tokens"
+        hidden_size=768,  # ^ called "dim"
+        num_hidden_layers=12,  # ^ called "depth"
+        num_attention_heads=12,  # ^ called "heads"
+
+        # ADDITIONAL for lucidrains required:
+        causal=False,
+        max_seq_len=8192,
+        # Next one: Probably not required since in Bert it's calculated as int(hidden_size/num_attention_heads):
+        # dim_head=64,  # dimensions per head
+        block_size=128,  # block size for hierarchical attention
+        reversible=True,  # reversibility to save memory with increased depth
+        shift_tokens=True,  # shift half the feature space by one along the sequence dimension,
+                            # for faster convergence (experimental)
+
+        # COOKIECUTTER TEMPLATE configs not yet used:
         intermediate_size=3072,
         hidden_act="gelu",
         hidden_dropout_prob=0.1,
@@ -115,6 +128,12 @@ class HTransformer1dConfig(PretrainedConfig):
         self.hidden_size = hidden_size
         self.num_hidden_layers = num_hidden_layers
         self.num_attention_heads = num_attention_heads
+        self.causal = causal,
+        self.max_seq_len = max_seq_len,
+        self.dim_head = dim_head,
+        self.block_size = block_size,
+        self.reversible = reversible,
+        self.shift_tokens = shift_tokens,
         self.intermediate_size = intermediate_size
         self.hidden_act = hidden_act
         self.hidden_dropout_prob = hidden_dropout_prob
