@@ -93,9 +93,13 @@ class HTransformer1dConfig(PretrainedConfig):
         self,
         # REQUIRED for lucidrains implementation:
         vocab_size=30522,  # ^ called "num_tokens"
-        hidden_size=768,  # ^ called "dim"
+        hidden_size=512,  # ^ called "dim" --- SHOULD BE POWER OF 2 to avoid padding for hierarchical splitting
         num_hidden_layers=12,  # ^ called "depth"
-        num_attention_heads=12,  # ^ called "heads"
+        num_attention_heads=8,  # ^ called "heads"
+
+        # REQUIRED for default positional embedding implementation
+        position_embedding_type="relative_key_query",  # https://arxiv.org/abs/2009.13658
+        max_position_embeddings=512,
 
         # ADDITIONAL for lucidrains required:
         causal=False,
@@ -112,7 +116,6 @@ class HTransformer1dConfig(PretrainedConfig):
         hidden_act="gelu",
         hidden_dropout_prob=0.1,
         attention_probs_dropout_prob=0.1,
-        max_position_embeddings=512,
         type_vocab_size=2,
         initializer_range=0.02,
         layer_norm_eps=1e-12,
@@ -124,16 +127,17 @@ class HTransformer1dConfig(PretrainedConfig):
         **kwargs
     ):
         self.vocab_size = vocab_size
+        self.position_embedding_type = position_embedding_type
         self.max_position_embeddings = max_position_embeddings
         self.hidden_size = hidden_size
         self.num_hidden_layers = num_hidden_layers
         self.num_attention_heads = num_attention_heads
-        self.causal = causal,
-        self.max_seq_len = max_seq_len,
-        self.dim_head = dim_head,
-        self.block_size = block_size,
-        self.reversible = reversible,
-        self.shift_tokens = shift_tokens,
+        self.causal = causal
+        self.max_seq_len = max_seq_len
+        # self.dim_head = dim_head,
+        self.block_size = block_size
+        self.reversible = reversible
+        self.shift_tokens = shift_tokens
         self.intermediate_size = intermediate_size
         self.hidden_act = hidden_act
         self.hidden_dropout_prob = hidden_dropout_prob
