@@ -225,14 +225,7 @@ class HTransformer1dSelfAttention(nn.Module):
 
         self.block_size = config.block_size
 
-        self.dropout = nn.Dropout(config.attention_probs_dropout_prob)
-
         # position embedding replaced by rotary embedding in Model-class and passed through forward()
-        #     self.position_embedding_type = getattr(config, "position_embedding_type", "absolute")
-        #     if self.position_embedding_type == "relative_key" or self.position_embedding_type == "relative_key_query":
-        #         self.max_position_embeddings = config.max_position_embeddings
-        #         self.distance_embedding = nn.Embedding(2 * config.max_position_embeddings - 1, self.attention_head_size)
-
 
         self.is_decoder = config.is_decoder
 
