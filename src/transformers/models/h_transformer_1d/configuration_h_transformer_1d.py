@@ -119,9 +119,9 @@ class HTransformer1dConfig(PretrainedConfig):
         type_vocab_size=1,  # set to 2 for token-type-embeddings (= 2-sentence-embedding)
         use_cache=True,
         # depending on your tokenizer you have to configure the token ids
-        pad_token_id=1,
-        bos_token_id=0,
-        eos_token_id=2,
+        pad_token_id=1,  # Roberta-Tokenizer:1
+        bos_token_id=0,  # Roberta-Tokenizer:0
+        eos_token_id=2,  # Roberta-Tokenizer:2
 
         # for the previous positional embedding implementation before the addition of rotary embeddings
         # if you set this to "absolute", it will add an absolute pos.emb. at the start of the network (unnecessary)
