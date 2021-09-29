@@ -457,11 +457,13 @@ class HTransformer1dSelfAttention(nn.Module):
                 return el
             return torch.cat((el, acc), dim=dim)
 
-        # interpolate
-        Y = None
-        A = None
+
 
         if not self.is_decoder:
+            # interpolate
+            Y = 0
+            A = 0
+
             for ind, (Y_level, A_level) in enumerate(Ys):
                 is_last = ind == (len(Ys) - 1)
 
@@ -474,6 +476,10 @@ class HTransformer1dSelfAttention(nn.Module):
                 Y = Y_level + Y
                 A = A_level + A
         else:
+            # interpolate
+            Y = None
+            A = None
+
             for Y_level, A_level in Ys:
                 Y_level, A_level = map(lambda t: rearrange(t, '... -> () ...'), (Y_level, A_level))
 
