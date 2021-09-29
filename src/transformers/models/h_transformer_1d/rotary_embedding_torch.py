@@ -87,9 +87,9 @@ class RotaryEmbedding(nn.Module):
         else:
             self.register_buffer('freqs', freqs)
 
-    def forward(self, t, cache_key = None):
-        if exists(cache_key) and cache_key in self.cache:
-            return self.cache[cache_key]
+    def forward(self, t, cache_key=None):
+        if exists(cache_key) and str(cache_key) + str(t.device) in self.cache:
+            return self.cache[str(cache_key) + str(t.device)]
 
         if isfunction(t):
             t = t()
@@ -97,9 +97,9 @@ class RotaryEmbedding(nn.Module):
         freqs = self.freqs
 
         freqs = torch.einsum('..., f -> ... f', t.type(freqs.dtype), freqs)
-        freqs = repeat(freqs, '... n -> ... (n r)', r = 2)
+        freqs = repeat(freqs, '... n -> ... (n r)', r=2)
 
         if exists(cache_key):
-            self.cache[cache_key] = freqs
+            self.cache[str(cache_key) + str(t.device)] = freqs
 
         return freqs

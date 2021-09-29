@@ -369,7 +369,7 @@ class HTransformer1dSelfAttention(nn.Module):
             if mask is not None:
                 mask_value = -torch.finfo(S.dtype).max
                 # S = S.masked_fill(~mask, mask_value)
-                S = torch.where(mask == 0, torch.ones(S.size(), dtype=S.dtype)*mask_value, S)
+                S = torch.where(mask == 0, torch.ones(S.size(), dtype=S.dtype, device=S.device)*mask_value, S)
 
             S = S - torch.max(S, dim=-1, keepdim=True).values
             A = S.exp()
@@ -458,9 +458,8 @@ class HTransformer1dSelfAttention(nn.Module):
             return torch.cat((el, acc), dim=dim)
 
 
-
+        # interpolate
         if not self.is_decoder:
-            # interpolate
             Y = 0
             A = 0
 
@@ -476,7 +475,6 @@ class HTransformer1dSelfAttention(nn.Module):
                 Y = Y_level + Y
                 A = A_level + A
         else:
-            # interpolate
             Y = None
             A = None
 
