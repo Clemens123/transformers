@@ -96,34 +96,38 @@ class HTransformer1dConfig(PretrainedConfig):
         hidden_size=512,  # ^ called "dim" --- SHOULD BE POWER OF 2 to avoid padding for hierarchical splitting
         num_hidden_layers=12,  # ^ called "depth"
         num_attention_heads=8,  # ^ called "heads"
-
-        # REQUIRED for default positional embedding implementation
-        position_embedding_type="relative_key_query",  # https://arxiv.org/abs/2009.13658
-        max_position_embeddings=512,
-
-        # ADDITIONAL for lucidrains required:
-        causal=False,
-        max_seq_len=8192,
+        is_decoder=False,  # ^ called "causal"
+        max_seq_len=8192,  # required for decoder-style causal attention
         # Next one: Probably not required since in Bert it's calculated as int(hidden_size/num_attention_heads):
         # dim_head=64,  # dimensions per head
         block_size=128,  # block size for hierarchical attention
+        # attention_probs_dropout_prob=0.1,  # no dropout in attention implemented
+
+        # NOT YET IMPLEMENTED:
         reversible=True,  # reversibility to save memory with increased depth
         shift_tokens=True,  # shift half the feature space by one along the sequence dimension,
                             # for faster convergence (experimental)
 
-        # COOKIECUTTER TEMPLATE configs not yet used:
+        # network configs independent of attention implementation:
         intermediate_size=3072,
         hidden_act="gelu",
         hidden_dropout_prob=0.1,
-        attention_probs_dropout_prob=0.1,
-        type_vocab_size=2,
         initializer_range=0.02,
         layer_norm_eps=1e-12,
+
+        # REQUIRED FOR SPECIFIC TASKS
+        type_vocab_size=1,  # set to 2 for token-type-embeddings (= 2-sentence-embedding)
         use_cache=True,
-        is_encoder_decoder=False,
+        # depending on your tokenizer you have to configure the token ids
         pad_token_id=1,
         bos_token_id=0,
         eos_token_id=2,
+
+        # for the previous positional embedding implementation before the addition of rotary embeddings
+        # if you set this to "absolute", it will add an absolute pos.emb. at the start of the network (unnecessary)
+        position_embedding_type="relative_key_query",  # https://arxiv.org/abs/2009.13658
+        max_position_embeddings=512,
+
         **kwargs
     ):
         self.vocab_size = vocab_size
@@ -132,7 +136,7 @@ class HTransformer1dConfig(PretrainedConfig):
         self.hidden_size = hidden_size
         self.num_hidden_layers = num_hidden_layers
         self.num_attention_heads = num_attention_heads
-        self.causal = causal
+        self.is_decoder = is_decoder
         self.max_seq_len = max_seq_len
         # self.dim_head = dim_head,
         self.block_size = block_size
@@ -141,7 +145,7 @@ class HTransformer1dConfig(PretrainedConfig):
         self.intermediate_size = intermediate_size
         self.hidden_act = hidden_act
         self.hidden_dropout_prob = hidden_dropout_prob
-        self.attention_probs_dropout_prob = attention_probs_dropout_prob
+        # self.attention_probs_dropout_prob = attention_probs_dropout_prob
         self.initializer_range = initializer_range
         self.type_vocab_size = type_vocab_size
         self.layer_norm_eps = layer_norm_eps
