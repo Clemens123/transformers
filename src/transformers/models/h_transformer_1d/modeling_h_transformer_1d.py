@@ -269,6 +269,7 @@ class HTransformer1dSelfAttention(nn.Module):
     ):
 
         seq_len = hidden_states.shape[1]
+        attention_mask = attention_mask.bool()
 
         q = self.query(hidden_states)
         k = self.key(hidden_states)
@@ -285,7 +286,7 @@ class HTransformer1dSelfAttention(nn.Module):
             k = torch.nn.functional.pad(k, (0, padding), value=0.)
             v = torch.nn.functional.pad(v, (0, padding), value=0.)
             if attention_mask is not None and not self.is_decoder:
-                attention_mask = torch.nn.functional.pad(attention_mask, (0, padding), value=0)  # lucidrains: value=False
+                attention_mask = torch.nn.functional.pad(attention_mask, (0, padding), value=False)
 
         # split out heads, and also divide sequence into blocks
         q, k, v = map(lambda t: rearrange(t, 'b n (h d) -> (b h) n d', h=self.num_attention_heads), (q, k, v))
@@ -327,7 +328,7 @@ class HTransformer1dSelfAttention(nn.Module):
 
             diff_len = len(tensor.shape) - len(mask.shape)
             mask = mask[(..., *((None,) * diff_len))]
-            tensor = tensor.masked_fill(1-mask, 0.)
+            tensor = tensor.masked_fill(~mask, 0.)
 
             total_el = mask.sum(dim=dim)
             agg = tensor.sum(dim=dim)
@@ -355,7 +356,7 @@ class HTransformer1dSelfAttention(nn.Module):
                 v = v.sum(dim=2)
 
             if attention_mask is not None and not self.is_decoder:
-                attention_mask = torch.any(attention_mask, dim=2).float()
+                attention_mask = torch.any(attention_mask, dim=2)
 
             if not self.is_decoder:
                 coarsened_qkvs = (q, k, v, attention_mask)
@@ -372,9 +373,9 @@ class HTransformer1dSelfAttention(nn.Module):
 
             if mask is not None:
                 mask_value = -torch.finfo(S.dtype).max
-                #S = S.masked_fill(~mask, mask_value)
+                S = S.masked_fill(~mask, mask_value)
                 # S = torch.where(mask == 0, torch.ones(S.size(), dtype=S.dtype, device=S.device)*mask_value, S)
-                S = S.masked_fill(1-mask, mask_value)
+                # S = S.masked_fill(1-mask, mask_value)
 
             S = S - torch.max(S, dim=-1, keepdim=True).values
             A = S.exp()
