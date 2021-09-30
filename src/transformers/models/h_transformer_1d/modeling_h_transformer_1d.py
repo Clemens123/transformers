@@ -144,7 +144,8 @@ class HTransformer1dEmbeddings(nn.Module):
     def __init__(self, config):
         super().__init__()
         self.word_embeddings = nn.Embedding(config.vocab_size, config.hidden_size, padding_idx=config.pad_token_id)
-        self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
+        if config.position_embedding_type == "absolute":
+            self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
         self.token_type_embeddings = nn.Embedding(config.type_vocab_size, config.hidden_size)
 
         # self.LayerNorm is not snake-cased to stick with TensorFlow model variable name and be able to load
@@ -266,6 +267,9 @@ class HTransformer1dSelfAttention(nn.Module):
             past_key_value=None,
             output_attentions=False,
     ):
+
+        seq_len = hidden_states.shape[1]
+
         q = self.query(hidden_states)
         k = self.key(hidden_states)
         v = self.value(hidden_states)
@@ -273,8 +277,8 @@ class HTransformer1dSelfAttention(nn.Module):
         # CALCULATE ATTENTION SCORES
 
         # pad sequence length to power of 2
-        pad_to_len = 2 ** math.ceil(math.log2(self.hidden_size))
-        padding = pad_to_len - self.hidden_size
+        pad_to_len = 2 ** math.ceil(math.log2(seq_len))
+        padding = pad_to_len - seq_len
 
         if padding != 0:
             q = torch.nn.functional.pad(q, (0, padding), value=0.)
@@ -323,7 +327,7 @@ class HTransformer1dSelfAttention(nn.Module):
 
             diff_len = len(tensor.shape) - len(mask.shape)
             mask = mask[(..., *((None,) * diff_len))]
-            tensor = tensor.masked_fill(~mask, 0.)
+            tensor = tensor.masked_fill(1-mask, 0.)
 
             total_el = mask.sum(dim=dim)
             agg = tensor.sum(dim=dim)
@@ -351,7 +355,7 @@ class HTransformer1dSelfAttention(nn.Module):
                 v = v.sum(dim=2)
 
             if attention_mask is not None and not self.is_decoder:
-                attention_mask = torch.any(attention_mask, dim=2)
+                attention_mask = torch.any(attention_mask, dim=2).float()
 
             if not self.is_decoder:
                 coarsened_qkvs = (q, k, v, attention_mask)
@@ -368,8 +372,9 @@ class HTransformer1dSelfAttention(nn.Module):
 
             if mask is not None:
                 mask_value = -torch.finfo(S.dtype).max
-                # S = S.masked_fill(~mask, mask_value)
-                S = torch.where(mask == 0, torch.ones(S.size(), dtype=S.dtype, device=S.device)*mask_value, S)
+                #S = S.masked_fill(~mask, mask_value)
+                # S = torch.where(mask == 0, torch.ones(S.size(), dtype=S.dtype, device=S.device)*mask_value, S)
+                S = S.masked_fill(1-mask, mask_value)
 
             S = S - torch.max(S, dim=-1, keepdim=True).values
             A = S.exp()
@@ -515,7 +520,7 @@ class HTransformer1dSelfAttention(nn.Module):
         #     outputs = outputs + (past_key_value,)
 
         # return combined out as tuple
-        return (self.output_layer(out[:, :self.hidden_size]),)
+        return (self.output_layer(out[:, :seq_len]),)
 
 
 class HTransformer1dSelfOutput(nn.Module):
