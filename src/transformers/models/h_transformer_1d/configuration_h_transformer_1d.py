@@ -114,6 +114,7 @@ class HTransformer1dConfig(PretrainedConfig):
         hidden_dropout_prob=0.1,
         initializer_range=0.02,
         layer_norm_eps=1e-12,
+        max_position_embeddings=512,  # HAS TO BE SET TO seqence_length FOR EMBEDDING BUFFER
 
         # REQUIRED FOR SPECIFIC TASKS
         type_vocab_size=1,  # set to 2 for token-type-embeddings (= 2-sentence-embedding)
@@ -126,7 +127,6 @@ class HTransformer1dConfig(PretrainedConfig):
         # for the previous positional embedding implementation before the addition of rotary embeddings
         # if you set this to "absolute", it will add an absolute pos.emb. at the start of the network (unnecessary)
         position_embedding_type="relative_key_query",  # https://arxiv.org/abs/2009.13658
-        max_position_embeddings=512,  # for absolute positional embeddings
 
         **kwargs
     ):
