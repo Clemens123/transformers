@@ -282,9 +282,9 @@ class HTransformer1dSelfAttention(nn.Module):
         padding = pad_to_len - seq_len
 
         if padding != 0:
-            q = torch.nn.functional.pad(q, (0, padding), value=0.)
-            k = torch.nn.functional.pad(k, (0, padding), value=0.)
-            v = torch.nn.functional.pad(v, (0, padding), value=0.)
+            q = torch.nn.functional.pad(q, (0, 0, 0, padding), value=0.)
+            k = torch.nn.functional.pad(k, (0, 0, 0, padding), value=0.)
+            v = torch.nn.functional.pad(v, (0, 0, 0, padding), value=0.)
             if attention_mask is not None and not self.is_decoder:
                 attention_mask = torch.nn.functional.pad(attention_mask, (0, padding), value=False)
 
