@@ -278,7 +278,7 @@ class HTransformer1dSelfAttention(nn.Module):
         # CALCULATE ATTENTION SCORES
 
         # pad sequence length to power of 2
-        pad_to_len = 2 ** math.ceil(math.log2(seq_len))
+        pad_to_len = 2 ** math.ceil(math.log2(max(seq_len, 4*self.block_size))) # for inference with block_size >> seq_len hierarchical attention does not work
         padding = pad_to_len - seq_len
 
         if padding != 0:
